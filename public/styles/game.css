@@ -1,0 +1,52 @@
+html, body {
+    padding: 0;
+    margin: 0;
+}
+canvas {
+    display: block;
+}
+.quit-popup {
+    --animation-dur: 0.15s;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    animation: show var(--animation-dur) ease-out forwards;
+}
+.blur {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.794);
+}
+.quit {
+    margin: auto;
+    z-index: 9999;
+    border: black;
+    color: black;
+    padding: 0.3em 0.5em;
+    font-size: 4rem;
+    border-radius: 5px;
+    cursor: pointer;
+    animation: btnScaleDown var(--animation-dur) ease-out forwards;
+}
+@keyframes btnScaleDown {
+    from {
+        font-size: 4rem;
+        border-radius: 10px;
+    }
+    to {
+        font-size: 1.5rem;
+        border-radius: 5px;
+    }
+}
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100%;
+    }
+}
