@@ -111,5 +111,5 @@ function endGame(game, socket) {
   }
 }
 
-const port = 3000 || process.env.PORT;
+const port = 4000 || process.env.PORT;
 http.listen(port, () => console.log("listenning on port: " + port));

@@ -8,26 +8,27 @@ let winner, tie;
 let end, start;
 
 function setup() {
-  window.canvas = createCanvas(windowWidth, windowHeight);
+  window.canvas = createCanvas(window.innerWidth, window.innerHeight);
   boardManager = new BoardManager();
-  select(".quit").mousePressed(()=>{
+  select(".quit").mousePressed(() => {
     location.pathname = "/";
-  })
+  });
 }
 function draw() {
   background(255);
   textAlign(CENTER, CENTER);
   if (gameStarted) {
-    mouseXtile = floor((mouseX - width / 2) / boardManager.boardLineDist + 1.5);
-    mouseYtile = floor(
-      (mouseY - height / 2) / boardManager.boardLineDist + 1.5
-    );
+    updateMouseTilePos();
     boardManager.showBoard();
     noStroke();
     textSize(30);
     if (gameFinished) {
       text(
-        tie ? "it's a tie :|" : (winner === symbol ? "you have won! :)" : "you have lost :("),
+        tie
+          ? "it's a tie :|"
+          : winner === symbol
+          ? "you have won! :)"
+          : "you have lost :(",
         width / 2,
         20
       );
@@ -43,22 +44,21 @@ function draw() {
     text("waiting for other player...", width / 2, height / 2);
   }
 }
-
+function updateMouseTilePos() {
+  mouseXtile = floor((mouseX - width / 2) / boardManager.boardLineDist + 1.5);
+  mouseYtile = floor((mouseY - height / 2) / boardManager.boardLineDist + 1.5);
+}
 function mousePressed() {
+  updateMouseTilePos();
   if (!gameFinished && boardManager.mouseInBoard()) {
-    if (!isMyTurn) {
-      alert("it's not your turn yet");
+    if (!isMyTurn||!boardManager.setTile(mouseXtile, mouseYtile, symbol)) {
       return;
     }
-    if (!boardManager.setTile(mouseXtile, mouseYtile, symbol)) {
-      alert("can't overwrite tile");
-    } else {
-      socket.emit("play", {
-        x: mouseXtile,
-        y: mouseYtile,
-        symbol,
-      });
-    }
+    socket.emit("play", {
+      x: mouseXtile,
+      y: mouseYtile,
+      symbol,
+    });
   }
 }
 function windowResized() {
@@ -72,25 +72,25 @@ socket.on("update", ({ board, gameHasFinished, winnerData }) => {
   isMyTurn = !isMyTurn;
   boardManager.updateBoard(board);
   if (gameHasFinished) {
-    if(winnerData.winner==="tie"){
+    if (winnerData.winner === "tie") {
       console.log(winnerData);
-      console.log("tie")
+      console.log("tie");
       tie = true;
       gameFinished = true;
       winner = "tie";
-    }else{
+    } else {
       end = winnerData.end;
       start = winnerData.start;
       gameFinished = true;
       winner = winnerData.winner;
     }
-    setTimeout(()=>{
+    setTimeout(() => {
       document.querySelector(".quit-popup").style.display = "flex";
-    }, 1500)
+    }, 1500);
   }
 });
 socket.on("setup", (msg) => {
-  if(!gameStarted){
+  if (!gameStarted) {
     symbol = msg.symbol;
     isMyTurn = msg.turn;
     gameStarted = true;

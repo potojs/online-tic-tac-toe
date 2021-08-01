@@ -41,7 +41,10 @@ class BoardManager {
   }
   mouseInBoard() {
     return (
-      mouseXtile < 3 && mouseXtile >= 0 && mouseYtile < 3 && mouseYtile >= 0
+      mouseX > width/2-this.boardLineDist*1.5 &&
+      mouseX < width/2+this.boardLineDist*1.5 &&
+      mouseY > height/2-this.boardLineDist*1.5 &&
+      mouseY < height/2+this.boardLineDist*1.5 
     );
   }
   drawSymbol(x, y, symbol, alpha=255) {
